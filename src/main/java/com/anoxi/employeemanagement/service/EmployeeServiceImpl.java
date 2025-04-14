@@ -15,9 +15,37 @@ public class EmployeeServiceImpl implements EmployeeService {
     private static final Logger logger = LoggerFactory.getLogger(EmployeeServiceImpl.class);
 
     private final EmployeeRepository employeeRepository;
+    private final EmailService emailService;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, EmailService emailService) {
         this.employeeRepository = employeeRepository;
+        this.emailService = emailService;
+    }
+
+    //register employee
+    public Employee registerEmployee(EmployeeDTO employeeDTO){
+        logger.info("Registering new Employee: {} ", employeeDTO.getFullName());
+
+        Employee employee = new Employee();
+        employee.setFirstName(employeeDTO.getFirstName());
+        employee.setLastName(employeeDTO.getLastName());
+        employee.setEmail(employeeDTO.getEmail());
+        employee.setDepartment(employeeDTO.getDepartment());
+        employee.setPosition(employeeDTO.getPosition());
+        employee.setSalary(employeeDTO.getSalary());
+        employee.setHiredate(employeeDTO.getHiredate());
+
+        Employee saveEmp = employeeRepository.save(employee);
+
+        try {
+            emailService.sendEmail(saveEmp.getEmail(), saveEmp.getFirstName());
+
+            logger.info("Send email to : {}", saveEmp.getEmail());
+        } catch (Exception e) {
+            logger.error("Failed to send email to : {}", saveEmp.getEmail(), e);
+        }
+
+        return saveEmp;
     }
 
     //fetch all employees
@@ -40,6 +68,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     //converting your employee entity object into employeeDTO object
     private EmployeeDTO converToDTO(Employee employee){
         EmployeeDTO employeeDTO = new EmployeeDTO();
+        employeeDTO.setFirstName(employee.getFirstName());
+        employeeDTO.setLastName(employee.getLastName());
         employeeDTO.setFullName(employee.getFirstName()+" "+employee.getLastName());
         employeeDTO.setEmail(employee.getEmail());
         employeeDTO.setDepartment(employee.getDepartment());

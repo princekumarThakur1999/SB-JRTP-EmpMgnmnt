@@ -9,6 +9,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class EmployeeDTO {
 
+    private String firstName;
+    private String lastName;
     private String fullName;
     private String email;
     private String department;
@@ -16,4 +18,8 @@ public class EmployeeDTO {
     private LocalDate hiredate;
     private Float salary;
 
+    public String getFullName(){
+
+        return (firstName != null && lastName != null)? firstName +" "+ lastName : null;
+    }
 }

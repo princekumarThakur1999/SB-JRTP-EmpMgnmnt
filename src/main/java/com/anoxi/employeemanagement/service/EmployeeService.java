@@ -13,4 +13,6 @@ public interface EmployeeService {
     //get employees by department name
     List<EmployeeDTO> getEmployeesByDepartment(String department);
 
+    //register employee
+    Employee registerEmployee(EmployeeDTO employeeDTO);
 }
